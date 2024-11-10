@@ -18,13 +18,18 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: npm install # Ensure all dependencies are installed for Snyk to detect
+        run: npm install # Adjust to match your dependency manager
 
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
         with:
           command: test
           args: '--severity-threshold=low --all-projects'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Monitor project in Snyk
+        run: snyk monitor
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -45,4 +50,4 @@ jobs:
 
       - name: Run Trivy Filesystem Scan
         run: trivy fs --exit-code 0 .
-        # This scans the entire repository for vulnerabilities in dependencies across all severities
+        # Trivy will report vulnerabilities of all severities
