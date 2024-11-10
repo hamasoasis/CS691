@@ -27,7 +27,7 @@ jobs:
         run: snyk auth "${{ secrets.SNYK_TOKEN }}" # Ensure your SNYK_TOKEN is correctly set in GitHub Secrets
 
       - name: Run Snyk to check for vulnerabilities
-        run: snyk test --all-projects --severity-threshold=medium # Adjust the severity threshold as needed
+        run: snyk test --all-projects --severity-threshold=low # Adjust the severity threshold as needed
 
       - name: Monitor project in Snyk
         run: snyk monitor
