@@ -1,4 +1,4 @@
-name: Dependency Scanning with Snyk and Trivy
+name: Dependency Scanning for Snyk and Trivy
 
 on:
   push:
@@ -48,6 +48,14 @@ jobs:
           sudo apt-get install -y wget
           wget https://github.com/aquasecurity/trivy/releases/download/v0.35.0/trivy_0.35.0_Linux-64bit.deb
           sudo dpkg -i trivy_0.35.0_Linux-64bit.deb
+
+      - name: Cache Trivy DB
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/trivy
+          key: trivy-db-${{ runner.os }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            trivy-db-${{ runner.os }}-
 
       - name: Run Trivy Filesystem Scan
         run: trivy fs --exit-code 0 .
