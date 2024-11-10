@@ -1,4 +1,4 @@
-name: Dependency and Image Scanning
+name: Dependency Scanning for Snyk and Trivy
 
 on:
   push:
