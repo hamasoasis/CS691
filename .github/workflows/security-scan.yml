@@ -34,7 +34,7 @@ jobs:
       - name: Monitor project in Snyk
         run: snyk monitor
 
-   trivy-dependency-scan:
+  trivy-dependency-scan:
     name: Trivy Dependency Scan
     runs-on: ubuntu-latest
 
