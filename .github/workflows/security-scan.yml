@@ -17,22 +17,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js (if you have Node.js dependencies)
-        uses: actions/setup-node@v2
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
         with:
-          node-version: '16'
-
-      - name: Install Snyk
-        run: npm install -g snyk
-
-      - name: Authenticate Snyk
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
-      - name: Run Snyk test
-        run: snyk test
-
-      - name: Monitor project in Snyk
-        run: snyk monitor
+          command: test
+          args: '--severity-threshold=high --all-projects'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   trivy-dependency-scan:
     name: Trivy Dependency Scan
@@ -42,14 +33,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.35.0/trivy_0.35.0_Linux-64bit.deb
-          sudo dpkg -i trivy_0.35.0_Linux-64bit.deb
-
-      - name: Run Trivy Filesystem Scan
-        run: trivy fs --exit-code 1 --severity HIGH,CRITICAL .
-        # This scans the entire repository for vulnerabilities in dependencies
-        # You can add --ignore-unfixed to skip unfixed vulnerabilities
+      - name: Install and Run Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          severity: 'HIGH,CRITICAL'
