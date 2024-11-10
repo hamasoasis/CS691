@@ -1,4 +1,4 @@
-name: Dependency Scanning for Snyk and Trivy
+name: Dependency Scanning with Snyk and Trivy
 
 on:
   push:
@@ -18,15 +18,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: npm install # Adjust to match your dependency manager
+        run: npm install # Adjust this to match your project's dependency manager
+
+      - name: Install Snyk CLI
+        run: npm install -g snyk # Install Snyk globally
+
+      - name: Authenticate Snyk
+        run: snyk auth "${{ secrets.SNYK_TOKEN }}" # Ensure your SNYK_TOKEN is correctly set in GitHub Secrets
 
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        with:
-          command: test
-          args: '--severity-threshold=low --all-projects'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk test --all-projects --severity-threshold=medium # Adjust the severity threshold as needed
 
       - name: Monitor project in Snyk
         run: snyk monitor
@@ -50,4 +51,3 @@ jobs:
 
       - name: Run Trivy Filesystem Scan
         run: trivy fs --exit-code 0 .
-        # Trivy will report vulnerabilities of all severities
